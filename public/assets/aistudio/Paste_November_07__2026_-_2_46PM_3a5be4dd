@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bangladeshi CV & Resume Builder</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Tiro Bangla -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bdGreen: '#006a4e',
+                        bdRed: '#f42a41',
+                        slateDark: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Tiro Bangla', 'sans-serif'],
+                        bangla: ['Tiro Bangla', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Print Styles for clean A4 Page output */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .cv-preview-container {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+            }
+            .a4-page {
+                width: 100% !important;
+                min-height: 100vh !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                page-break-after: always;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        /* Standard A4 Screen Simulation */
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Header Navigation -->
+    <header class="bg-bdGreen text-white shadow-md sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-bdGreen font-bold text-xl shadow">
+                    <i class="fa-solid fa-file-contract"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight">BD CV Maker</h1>
+                    <p class="text-xs text-green-100">স্মার্ট ও প্রফেশনাল সিভি তৈরি করুন</p>
+                </div>
+            </div>
+
+            <!-- Role Auto-Fill Quick Action -->
+            <div class="flex items-center gap-2 bg-emerald-800/60 px-3 py-1.5 rounded-lg border border-emerald-600/40">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                <label for="rolePreset" class="text-xs font-medium text-emerald-100 whitespace-nowrap">অটো-ফিল (Preset):</label>
+                <select id="rolePreset" onchange="applyRolePreset(this.value)" class="bg-slate-800 text-white text-xs rounded border border-emerald-500/50 px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-400">
+                    <option value="">-- রোল নির্বাচন করুন --</option>
+                    <option value="software">Software Engineer</option>
+                    <option value="lecturer">University / College Lecturer</option>
+                    <option value="accountant">Accountant / Finance</option>
+                    <option value="sales">Sales & Marketing Executive</option>
+                    <option value="designer">Graphic & UI/UX Designer</option>
+                    <option value="banker">Bank Officer</option>
+                </select>
+            </div>
+
+            <!-- Header Action Buttons -->
+            <div class="flex items-center gap-2">
+                <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold px-4 py-2 rounded-lg text-sm transition flex items-center gap-2 shadow">
+                    <i class="fa-solid fa-print"></i> প্রিন্ট / PDF ডাউনলোড
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 flex flex-col lg:flex-row gap-6">
+
+        <!-- Left Column: Input Controls Sidebar (No Print) -->
+        <section class="lg:w-1/2 w-full flex flex-col gap-4 no-print max-h-[calc(100vh-5rem)] overflow-y-auto pr-1">
+            
+            <!-- Controls Toolbar: Format & Template selection -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-wrap gap-4 justify-between items-center">
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 block mb-1">সিভির ধরন (Pages)</label>
+                    <div class="flex rounded-lg bg-slate-100 p-1 border border-slate-200">
+                        <button id="btn1Page" onclick="setCVFormat('1page')" class="px-3 py-1 text-xs font-medium rounded-md transition bg-white text-bdGreen shadow">১ পৃষ্ঠা (Resume)</button>
+                        <button id="btn2Page" onclick="setCVFormat('2page')" class="px-3 py-1 text-xs font-medium rounded-md transition text-slate-600 hover:text-slate-900">২ পৃষ্ঠা (Detailed CV)</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 block mb-1">টেমপ্লেট স্টাইল</label>
+                    <select id="templateStyle" onchange="renderCV()" class="bg-slate-50 text-slate-700 text-xs rounded-lg border border-slate-300 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-bdGreen">
+                        <option value="classic">Classic Bangladeshi (Official)</option>
+                        <option value="modern">Modern Minimalist</option>
+                        <option value="corporate">Corporate Elegant</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Accordion Form Container -->
+            <div class="space-y-3">
+                
+                <!-- 1. Personal Information -->
+                <details class="bg-white rounded-xl shadow-sm border border-slate-200 group" open>
+                    <summary class="flex justify-between items-center p-4 cursor-pointer font-semibold text-slate-800 group-open:border-b group-open:border-slate-100 select-none">
+                        <span class="flex items-center gap-2 text-bdGreen">
+                            <i class="fa-solid fa-user-circle"></i> ব্যক্তিগত তথ্য (Personal Info)
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">পূর্ণ নাম *</label>
+                            <input type="text" id="fullName" value="Md. Tanvir Rahman" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">পদবী (Designation/Title)</label>
+                            <input type="text" id="jobTitle" value="Software Engineer" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">ইমেইল *</label>
+                            <input type="email" id="email" value="tanvir.rahman@example.com" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">মোবাইল নম্বর *</label>
+                            <input type="text" id="phone" value="+880 1712-345678" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-600 mb-1">বর্তমান ঠিকানা (Present Address)</label>
+                            <input type="text" id="presentAddress" value="House #42, Road #09, Block-D, Mirpur-12, Dhaka-1216" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-600 mb-1">ওয়েবসাইট / লিঙ্কডইন (LinkedIn/GitHub/Portfolio)</label>
+                            <input type="text" id="website" value="linkedin.com/in/tanvir-rahman" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                    </div>
+                </details>
+
+                <!-- 2. Career Objective / Summary -->
+                <details class="bg-white rounded-xl shadow-sm border border-slate-200 group">
+                    <summary class="flex justify-between items-center p-4 cursor-pointer font-semibold text-slate-800 group-open:border-b group-open:border-slate-100 select-none">
+                        <span class="flex items-center gap-2 text-bdGreen">
+                            <i class="fa-solid fa-bullseye"></i> ক্যারিয়ার অবজেক্টিভ / সামারি
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <div class="p-4 text-sm">
+                        <label class="block text-xs font-medium text-slate-600 mb-1">প্রফেশনাল বিবরণ (Executive Summary)</label>
+                        <textarea id="objective" rows="4" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">Dedicated and detail-oriented Software Engineer with over 3+ years of experience in developing scalable web applications. Passionate about solving complex problems and contributing to innovative tech initiatives in Bangladesh.</textarea>
+                    </div>
+                </details>
+
+                <!-- 3. Work Experience -->
+                <details class="bg-white rounded-xl shadow-sm border border-slate-200 group">
+                    <summary class="flex justify-between items-center p-4 cursor-pointer font-semibold text-slate-800 group-open:border-b group-open:border-slate-100 select-none">
+                        <span class="flex items-center gap-2 text-bdGreen">
+                            <i class="fa-solid fa-briefcase"></i> কর্মসংস্থান ও অভিজ্ঞতা (Work Experience)
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <div class="p-4 space-y-4 text-sm">
+                        <div id="experienceList" class="space-y-4">
+                            <!-- Dynamic Experience Items insert here -->
+                        </div>
+                        <button onclick="addExperienceItem()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 border border-slate-300">
+                            <i class="fa-solid fa-plus"></i> অভিজ্ঞতা যোগ করুন
+                        </button>
+                    </div>
+                </details>
+
+                <!-- 4. Education -->
+                <details class="bg-white rounded-xl shadow-sm border border-slate-200 group">
+                    <summary class="flex justify-between items-center p-4 cursor-pointer font-semibold text-slate-800 group-open:border-b group-open:border-slate-100 select-none">
+                        <span class="flex items-center gap-2 text-bdGreen">
+                            <i class="fa-solid fa-graduation-cap"></i> শিক্ষাগত যোগ্যতা (Education)
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <div class="p-4 space-y-4 text-sm">
+                        <div id="educationList" class="space-y-4">
+                            <!-- Dynamic Education Items insert here -->
+                        </div>
+                        <button onclick="addEducationItem()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 border border-slate-300">
+                            <i class="fa-solid fa-plus"></i> শিক্ষা যোগ করুন
+                        </button>
+                    </div>
+                </details>
+
+                <!-- 5. Skills & Training/Certifications -->
+                <details class="bg-white rounded-xl shadow-sm border border-slate-200 group">
+                    <summary class="flex justify-between items-center p-4 cursor-pointer font-semibold text-slate-800 group-open:border-b group-open:border-slate-100 select-none">
+                        <span class="flex items-center gap-2 text-bdGreen">
+                            <i class="fa-solid fa-code"></i> স্কিল ও ট্রেনিং (Skills & Certifications)
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <div class="p-4 space-y-3 text-sm">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">দক্ষতা (Skills - Comma separated)</label>
+                            <input type="text" id="skillsInput" value="JavaScript, React, Node.js, Python, PostgreSQL, Git, REST APIs, Problem Solving" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">ট্রেনিং / সার্টিফিকেট (Certifications)</label>
+                            <textarea id="certificationsInput" rows="2" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none" placeholder="যেমন: Professional Web Development - BASIS (2022)">Full Stack Web Development - Programming Hero (2022)&#10;Certified Scrum Master (CSM) - 2023</textarea>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- 6. Bangladeshi Specific Personal Details (Mandatory for 2-Page CV) -->
+                <details id="bdPersonalSection" class="bg-white rounded-xl shadow-sm border border-slate-200 group">
+                    <summary class="flex justify-between items-center p-4 cursor-pointer font-semibold text-slate-800 group-open:border-b group-open:border-slate-100 select-none">
+                        <span class="flex items-center gap-2 text-bdGreen">
+                            <i class="fa-solid fa-id-card"></i> ব্যক্তিগত বিস্তারিত (Bangladeshi CV Standard)
+                        </span>
+                        <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-normal">২ পৃষ্ঠা সিভির জন্য জরুরি</span>
+                    </summary>
+                    <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">পিতার নাম (Father's Name)</label>
+                            <input type="text" id="fatherName" value="Md. Abdur Rahman" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">মাতার নাম (Mother's Name)</label>
+                            <input type="text" id="motherName" value="Begum Rokeya" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">জন্ম তারিখ (Date of Birth)</label>
+                            <input type="text" id="dob" value="15th August 1996" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">জাতীয়তা (Nationality)</label>
+                            <input type="text" id="nationality" value="Bangladeshi (By Birth)" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">জাতীয় পরিচয়পত্র নম্বর (NID No.)</label>
+                            <input type="text" id="nid" value="1996269123456789" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">বৈবাহিক অবস্থা (Marital Status)</label>
+                            <select id="maritalStatus" onchange="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none bg-white">
+                                <option value="Unmarried">Unmarried (অবিবাহিত)</option>
+                                <option value="Married">Married (বিবাহিত)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">ধর্ম (Religion)</label>
+                            <input type="text" id="religion" value="Islam" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-600 mb-1">রক্তের গ্রুপ (Blood Group)</label>
+                            <input type="text" id="bloodGroup" value="B+ (Positive)" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-600 mb-1">স্থায়ী ঠিকানা (Permanent Address)</label>
+                            <input type="text" id="permanentAddress" value="Village: Rasulpur, P.O: Kaliganj, Upazila: Sadar, District: Bogura" oninput="updateCV()" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-bdGreen outline-none">
+                        </div>
+                    </div>
+                </details>
+
+                <!-- 7. References Section -->
+                <details id="bdReferenceSection" class="bg-white rounded-xl shadow-sm border border-slate-200 group">
+                    <summary class="flex justify-between items-center p-4 cursor-pointer font-semibold text-slate-800 group-open:border-b group-open:border-slate-100 select-none">
+                        <span class="flex items-center gap-2 text-bdGreen">
+                            <i class="fa-solid fa-users font-semibold"></i> রেফারেন্স (References)
+                        </span>
+                        <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+                    </summary>
+                    <div class="p-4 space-y-4 text-sm">
+                        <div id="referenceList" class="space-y-4">
+                            <!-- Dynamic References insert here -->
+                        </div>
+                        <button onclick="addReferenceItem()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 border border-slate-300">
+                            <i class="fa-solid fa-plus"></i> রেফারেন্স যোগ করুন
+                        </button>
+                    </div>
+                </details>
+
+            </div>
+        </section>
+
+        <!-- Right Column: Dynamic Live Preview Canvas -->
+        <section class="lg:w-1/2 w-full flex flex-col items-center">
+            <div class="w-full flex justify-between items-center mb-2 px-2 no-print">
+                <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                    <i class="fa-solid fa-eye text-bdGreen"></i> লাইভ সিভি প্রিভিউ (A4 Format)
+                </span>
+                <span id="pageCountBadge" class="text-xs bg-slate-200 text-slate-700 font-medium px-2.5 py-0.5 rounded-full">
+                    ফরম্যাট: ১ পৃষ্ঠা
+                </span>
+            </div>
+
+            <!-- CV Preview Outer Box -->
+            <div class="cv-preview-container w-full overflow-x-auto pb-6">
+                <!-- Dynamic Page Mount -->
+                <div id="cvDocument" class="a4-page transition-all duration-300">
+                    <!-- CV Content Rendered dynamically via JavaScript -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500 no-print">
+        <p>বাংলাদেশের স্ট্যান্ডার্ড অনুযায়ী সিভি ও রেজুমে বিল্ডার | Designed for Bangladeshi Job Seekers</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Default CV State
+        let currentFormat = '1page'; // '1page' or '2page'
+        
+        let experiences = [
+            {
+                company: "TechSolutions Bangladesh Ltd.",
+                designation: "Senior Software Engineer",
+                duration: "Jan 2022 - Present",
+                location: "Dhaka, Bangladesh",
+                details: "Led a team of 5 developers building fintech solutions. Optimized system architecture reducing server load by 35%."
+            },
+            {
+                company: "SoftTech Innovation",
+                designation: "Junior Web Developer",
+                duration: "Jul 2020 - Dec 2021",
+                location: "Dhaka, Bangladesh",
+                details: "Developed responsive front-end components using React and REST APIs for client projects."
+            }
+        ];
+
+        let educations = [
+            {
+                degree: "B.Sc. in Computer Science & Engineering",
+                institution: "Dhaka University of Engineering & Technology (DUET)",
+                year: "2016 - 2020",
+                result: "CGPA: 3.65 out of 4.00"
+            },
+            {
+                degree: "Higher Secondary Certificate (H.S.C)",
+                institution: "Dhaka College, Dhaka",
+                year: "2015",
+                result: "GPA: 5.00 out of 5.00"
+            }
+        ];
+
+        let references = [
+            {
+                name: "Dr. Mahfuzur Rahman",
+                designation: "Professor, Dept. of CSE",
+                organization: "DUET",
+                phone: "+880 1819-000000",
+                email: "mahfuz@duet.ac.bd"
+            },
+            {
+                name: "Ahsan Habib",
+                designation: "CTO",
+                organization: "TechSolutions BD Ltd.",
+                phone: "+880 1711-111111",
+                email: "ahsan@techsolutions.bd"
+            }
+        ];
+
+        // AI Presets for dynamic role filling
+        const presets = {
+            software: {
+                title: "Software Engineer",
+                summary: "Motivated Software Engineer with 3+ years of experience building scalable web applications. Proficient in modern JavaScript frameworks, cloud services, and backend system architecture.",
+                skills: "JavaScript, React.js, Node.js, Python, PostgreSQL, Docker, Git, REST API",
+                exp: [
+                    { company: "Brain Station 23", designation: "Software Engineer", duration: "2022 - Present", location: "Dhaka", details: "Developed core modules for enterprise banking platforms. Improved API response efficiency." },
+                    { company: "Kaz Software", designation: "Junior Developer", duration: "2020 - 2022", location: "Dhaka", details: "Maintained front-end interfaces and fixed backend microservice bugs." }
+                ]
+            },
+            lecturer: {
+                title: "Lecturer / Academician",
+                summary: "Dedicated Lecturer with a passion for higher education and research. Experienced in preparing curriculum, delivering lectures, and mentoring undergraduate students.",
+                skills: "Public Speaking, Academic Research, Course Development, Student Counseling, Curriculum Planning",
+                exp: [
+                    { company: "BRAC University", designation: "Lecturer", duration: "2022 - Present", location: "Dhaka", details: "Conducting core CSE courses, supervising senior undergraduate thesis projects." }
+                ]
+            },
+            accountant: {
+                title: "Senior Accountant",
+                summary: "Accurate and analytical Accountant with 4+ years in financial auditing, tax compliance (NBR standards), ledger management, and financial reporting.",
+                skills: "Tally Prime, MS Excel (Advanced), Tax & VAT (Bangladesh), Financial Auditing, QuickBooks",
+                exp: [
+                    { company: "Square Pharmaceuticals Ltd.", designation: "Accounts Executive", duration: "2021 - Present", location: "Dhaka", details: "Managed monthly financial audits, payroll processing, and NBR tax reporting." }
+                ]
+            },
+            sales: {
+                title: "Sales & Marketing Executive",
+                summary: "Results-driven Sales Executive with proven track record in B2B client acquisition, territory management, and revenue growth across Bangladeshi markets.",
+                skills: "B2B Sales, Client Relationship, Lead Generation, Market Research, Negotiation, CRM Software",
+                exp: [
+                    { company: "Aarong (BRAC Enterprises)", designation: "Territory Sales Executive", duration: "2021 - Present", location: "Dhaka", details: "Achieved 120% quarterly target continuously through strategic key client engagements." }
+                ]
+            },
+            designer: {
+                title: "Graphic & UI/UX Designer",
+                summary: "Creative Graphic Designer specializing in brand identity, user interface design, and digital marketing banners with a high visual standard.",
+                skills: "Adobe Photoshop, Illustrator, Figma, UI/UX Prototyping, Brand Design, Typography",
+                exp: [
+                    { company: "Webable Digital", designation: "Visual Designer", duration: "2022 - Present", location: "Dhaka", details: "Designed complete visual campaigns and UI layouts for top corporate clients." }
+                ]
+            },
+            banker: {
+                title: "Probationary Officer / Bank Officer",
+                summary: "Customer-centric banking professional with strong knowledge of retail banking, credit analysis, and financial compliance regulations.",
+                skills: "Core Banking Systems, Credit Risk Evaluation, Customer Relationship, AML Regulations, Financial Analysis",
+                exp: [
+                    { company: "Islami Bank Bangladesh PLC", designation: "Assistant Officer", duration: "2021 - Present", location: "Dhaka", details: "Handled retail customer accounts, loan verification, and daily cash transactions." }
+                ]
+            }
+        };
+
+        // Initialize App
+        window.onload = function() {
+            renderExperienceInputs();
+            renderEducationInputs();
+            renderReferenceInputs();
+            updateCV();
+        };
+
+        // Format Switcher (1 Page vs 2 Page)
+        function setCVFormat(format) {
+            currentFormat = format;
+            const btn1 = document.getElementById('btn1Page');
+            const btn2 = document.getElementById('btn2Page');
+            const badge = document.getElementById('pageCountBadge');
+
+            if (format === '1page') {
+                btn1.className = "px-3 py-1 text-xs font-medium rounded-md transition bg-white text-bdGreen shadow";
+                btn2.className = "px-3 py-1 text-xs font-medium rounded-md transition text-slate-600 hover:text-slate-900";
+                badge.innerText = "ফরম্যাট: ১ পৃষ্ঠা (Resume)";
+            } else {
+                btn2.className = "px-3 py-1 text-xs font-medium rounded-md transition bg-white text-bdGreen shadow";
+                btn1.className = "px-3 py-1 text-xs font-medium rounded-md transition text-slate-600 hover:text-slate-900";
+                badge.innerText = "ফরম্যাট: ২ পৃষ্ঠা (Detailed CV)";
+            }
+            updateCV();
+        }
+
+        // Apply Preset Role Content
+        function applyRolePreset(roleKey) {
+            if (!roleKey || !presets[roleKey]) return;
+            const data = presets[roleKey];
+            
+            document.getElementById('jobTitle').value = data.title;
+            document.getElementById('objective').value = data.summary;
+            document.getElementById('skillsInput').value = data.skills;
+
+            if (data.exp && data.exp.length > 0) {
+                experiences = data.exp.map(e => ({ ...e }));
+                renderExperienceInputs();
+            }
+
+            updateCV();
+        }
+
+        // Render Dynamic Input Fields
+        function renderExperienceInputs() {
+            const container = document.getElementById('experienceList');
+            container.innerHTML = '';
+            experiences.forEach((exp, index) => {
+                container.innerHTML += `
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2 relative">
+                        <button onclick="removeExperience(${index})" class="absolute top-2 right-2 text-rose-500 hover:text-rose-700 text-xs">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" placeholder="প্রতিষ্ঠান (Company)" value="${exp.company}" oninput="experiences[${index}].company = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                            <input type="text" placeholder="পদবী (Designation)" value="${exp.designation}" oninput="experiences[${index}].designation = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" placeholder="সময়কাল (Duration)" value="${exp.duration}" oninput="experiences[${index}].duration = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                            <input type="text" placeholder="লোকেশন (Location)" value="${exp.location}" oninput="experiences[${index}].location = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                        </div>
+                        <textarea placeholder="দায়িত্ব ও অর্জন (Responsibilities & Achievements)" oninput="experiences[${index}].details = this.value; updateCV();" class="w-full p-1.5 border rounded text-xs" rows="2">${exp.details}</textarea>
+                    </div>
+                `;
+            });
+        }
+
+        function addExperienceItem() {
+            experiences.push({ company: '', designation: '', duration: '', location: '', details: '' });
+            renderExperienceInputs();
+            updateCV();
+        }
+
+        function removeExperience(index) {
+            experiences.splice(index, 1);
+            renderExperienceInputs();
+            updateCV();
+        }
+
+        function renderEducationInputs() {
+            const container = document.getElementById('educationList');
+            container.innerHTML = '';
+            educations.forEach((edu, index) => {
+                container.innerHTML += `
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2 relative">
+                        <button onclick="removeEducation(${index})" class="absolute top-2 right-2 text-rose-500 hover:text-rose-700 text-xs">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <input type="text" placeholder="ডিগ্রী (Degree)" value="${edu.degree}" oninput="educations[${index}].degree = this.value; updateCV();" class="w-full p-1.5 border rounded text-xs">
+                        <input type="text" placeholder="প্রতিষ্ঠানের নাম (Institution)" value="${edu.institution}" oninput="educations[${index}].institution = this.value; updateCV();" class="w-full p-1.5 border rounded text-xs">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" placeholder="পাসের বছর (Year)" value="${edu.year}" oninput="educations[${index}].year = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                            <input type="text" placeholder="ফলাফল/CGPA (Result)" value="${edu.result}" oninput="educations[${index}].result = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addEducationItem() {
+            educations.push({ degree: '', institution: '', year: '', result: '' });
+            renderEducationInputs();
+            updateCV();
+        }
+
+        function removeEducation(index) {
+            educations.splice(index, 1);
+            renderEducationInputs();
+            updateCV();
+        }
+
+        function renderReferenceInputs() {
+            const container = document.getElementById('referenceList');
+            container.innerHTML = '';
+            references.forEach((ref, index) => {
+                container.innerHTML += `
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2 relative">
+                        <button onclick="removeReference(${index})" class="absolute top-2 right-2 text-rose-500 hover:text-rose-700 text-xs">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" placeholder="নাম (Name)" value="${ref.name}" oninput="references[${index}].name = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                            <input type="text" placeholder="পদবী (Designation)" value="${ref.designation}" oninput="references[${index}].designation = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="text" placeholder="প্রতিষ্ঠান (Organization)" value="${ref.organization}" oninput="references[${index}].organization = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                            <input type="text" placeholder="ফোন (Phone)" value="${ref.phone}" oninput="references[${index}].phone = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                            <input type="text" placeholder="ইমেইল (Email)" value="${ref.email}" oninput="references[${index}].email = this.value; updateCV();" class="p-1.5 border rounded text-xs">
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addReferenceItem() {
+            references.push({ name: '', designation: '', organization: '', phone: '', email: '' });
+            renderReferenceInputs();
+            updateCV();
+        }
+
+        function removeReference(index) {
+            references.splice(index, 1);
+            renderReferenceInputs();
+            updateCV();
+        }
+
+        // Main CV Render Trigger
+        function updateCV() {
+            renderCV();
+        }
+
+        function renderCV() {
+            const style = document.getElementById('templateStyle').value;
+            const container = document.getElementById('cvDocument');
+
+            // Gather inputs
+            const data = {
+                name: document.getElementById('fullName').value || 'আপনার নাম',
+                title: document.getElementById('jobTitle').value || 'পদবী',
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                presentAddress: document.getElementById('presentAddress').value,
+                website: document.getElementById('website').value,
+                objective: document.getElementById('objective').value,
+                skills: document.getElementById('skillsInput').value.split(',').map(s => s.trim()).filter(Boolean),
+                certifications: document.getElementById('certificationsInput').value.split('\n').filter(Boolean),
+                // BD Standard details
+                fatherName: document.getElementById('fatherName').value,
+                motherName: document.getElementById('motherName').value,
+                dob: document.getElementById('dob').value,
+                nationality: document.getElementById('nationality').value,
+                nid: document.getElementById('nid').value,
+                maritalStatus: document.getElementById('maritalStatus').value,
+                religion: document.getElementById('religion').value,
+                bloodGroup: document.getElementById('bloodGroup').value,
+                permanentAddress: document.getElementById('permanentAddress').value,
+            };
+
+            if (style === 'classic') {
+                container.innerHTML = generateClassicTemplate(data);
+            } else if (style === 'modern') {
+                container.innerHTML = generateModernTemplate(data);
+            } else {
+                container.innerHTML = generateCorporateTemplate(data);
+            }
+        }
+
+        /* -------------------------------------------------------------
+           TEMPLATE GENERATORS
+        ------------------------------------------------------------- */
+
+        // 1. Classic Official Bangladeshi CV Template
+        function generateClassicTemplate(d) {
+            return `
+            <div class="p-8 text-slate-800 text-sm leading-relaxed min-h-[297mm]">
+                <!-- Header -->
+                <div class="border-b-2 border-bdGreen pb-4 mb-4 text-center">
+                    <h1 class="text-2xl font-bold uppercase tracking-wide text-bdGreen mb-1">${d.name}</h1>
+                    <p class="text-base font-semibold text-slate-700">${d.title}</p>
+                    <div class="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-slate-600 mt-2">
+                        ${d.phone ? `<span><i class="fa-solid fa-phone text-bdGreen"></i> ${d.phone}</span>` : ''}
+                        ${d.email ? `<span><i class="fa-solid fa-envelope text-bdGreen"></i> ${d.email}</span>` : ''}
+                        ${d.website ? `<span><i class="fa-solid fa-globe text-bdGreen"></i> ${d.website}</span>` : ''}
+                    </div>
+                    ${d.presentAddress ? `<p class="text-xs text-slate-600 mt-1"><i class="fa-solid fa-location-dot text-bdGreen"></i> ${d.presentAddress}</p>` : ''}
+                </div>
+
+                <!-- Career Objective -->
+                ${d.objective ? `
+                <div class="mb-5">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-bdGreen border-b border-slate-300 pb-1 mb-2">
+                        Career Objective
+                    </h2>
+                    <p class="text-xs text-slate-700 text-justify">${d.objective}</p>
+                </div>` : ''}
+
+                <!-- Experience -->
+                ${experiences.length > 0 ? `
+                <div class="mb-5">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-bdGreen border-b border-slate-300 pb-1 mb-2">
+                        Work Experience
+                    </h2>
+                    <div class="space-y-3">
+                        ${experiences.map(exp => `
+                            <div>
+                                <div class="flex justify-between items-baseline">
+                                    <h3 class="font-bold text-slate-900 text-xs">${exp.designation} <span class="font-normal text-slate-600">at ${exp.company}</span></h3>
+                                    <span class="text-xs font-semibold text-slate-500">${exp.duration}</span>
+                                </div>
+                                ${exp.location ? `<p class="text-[11px] text-slate-400 mb-0.5">${exp.location}</p>` : ''}
+                                ${exp.details ? `<p class="text-xs text-slate-700 mt-1">${exp.details}</p>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>` : ''}
+
+                <!-- Education -->
+                ${educations.length > 0 ? `
+                <div class="mb-5">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-bdGreen border-b border-slate-300 pb-1 mb-2">
+                        Educational Qualification
+                    </h2>
+                    <table class="w-full text-xs text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 border-b">
+                                <th class="p-1.5 border">Degree / Exam</th>
+                                <th class="p-1.5 border">Institution</th>
+                                <th class="p-1.5 border">Passing Year</th>
+                                <th class="p-1.5 border">Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${educations.map(edu => `
+                                <tr class="border-b">
+                                    <td class="p-1.5 border font-semibold">${edu.degree}</td>
+                                    <td class="p-1.5 border">${edu.institution}</td>
+                                    <td class="p-1.5 border">${edu.year}</td>
+                                    <td class="p-1.5 border">${edu.result}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>` : ''}
+
+                <!-- Skills -->
+                ${d.skills.length > 0 ? `
+                <div class="mb-5">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-bdGreen border-b border-slate-300 pb-1 mb-2">
+                        Skills & Competencies
+                    </h2>
+                    <div class="flex flex-wrap gap-1.5">
+                        ${d.skills.map(skill => `<span class="bg-slate-100 text-slate-800 text-xs px-2.5 py-1 rounded border border-slate-200">${skill}</span>`).join('')}
+                    </div>
+                </div>` : ''}
+
+                <!-- Certifications -->
+                ${d.certifications.length > 0 ? `
+                <div class="mb-5">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-bdGreen border-b border-slate-300 pb-1 mb-2">
+                        Training & Certifications
+                    </h2>
+                    <ul class="list-disc list-inside text-xs text-slate-700 space-y-1">
+                        ${d.certifications.map(c => `<li>${c}</li>`).join('')}
+                    </ul>
+                </div>` : ''}
+
+                <!-- PAGE BREAK FOR 2-PAGE FORMAT -->
+                ${currentFormat === '2page' ? `
+                <div class="page-break my-6 border-t-2 border-dashed border-slate-300 pt-6 no-print text-center text-xs text-slate-400">[ Page 2 Starts Below ]</div>
+                
+                <!-- Personal Details (Detailed Bangladeshi Standard) -->
+                <div class="mb-5">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-bdGreen border-b border-slate-300 pb-1 mb-2">
+                        Personal Details
+                    </h2>
+                    <table class="w-full text-xs text-slate-700">
+                        <tr class="py-1"><td class="w-1/3 py-1 font-semibold">Father's Name</td><td>: ${d.fatherName}</td></tr>
+                        <tr class="py-1"><td class="py-1 font-semibold">Mother's Name</td><td>: ${d.motherName}</td></tr>
+                        <tr class="py-1"><td class="py-1 font-semibold">Date of Birth</td><td>: ${d.dob}</td></tr>
+                        <tr class="py-1"><td class="py-1 font-semibold">Nationality</td><td>: ${d.nationality}</td></tr>
+                        <tr class="py-1"><td class="py-1 font-semibold">National ID (NID)</td><td>: ${d.nid}</td></tr>
+                        <tr class="py-1"><td class="py-1 font-semibold">Marital Status</td><td>: ${d.maritalStatus}</td></tr>
+                        <tr class="py-1"><td class="py-1 font-semibold">Religion</td><td>: ${d.religion}</td></tr>
+                        <tr class="py-1"><td class="py-1 font-semibold">Blood Group</td><td>: ${d.bloodGroup}</td></tr>
+                        <tr class="py-1"><td class="py-1 font-semibold">Permanent Address</td><td>: ${d.permanentAddress}</td></tr>
+                    </table>
+                </div>
+
+                <!-- References -->
+                ${references.length > 0 ? `
+                <div class="mb-5">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-bdGreen border-b border-slate-300 pb-1 mb-2">
+                        References
+                    </h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        ${references.map(ref => `
+                            <div class="p-2 border border-slate-200 rounded text-xs space-y-0.5">
+                                <h3 class="font-bold text-slate-800">${ref.name}</h3>
+                                <p class="text-slate-600">${ref.designation}</p>
+                                <p class="text-slate-600">${ref.organization}</p>
+                                ${ref.phone ? `<p class="text-slate-500">Mobile: ${ref.phone}</p>` : ''}
+                                ${ref.email ? `<p class="text-slate-500">Email: ${ref.email}</p>` : ''}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>` : ''}
+
+                <div class="mt-12 text-xs">
+                    <p class="font-semibold">Declaration:</p>
+                    <p class="text-slate-600">I hereby declare that all the information provided above is accurate and true to the best of my knowledge.</p>
+                    <div class="mt-8 flex justify-between items-end">
+                        <div class="border-t border-slate-400 pt-1 w-40 text-center text-slate-600">
+                            Signature
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+            `;
+        }
+
+        // 2. Modern Minimalist Template
+        function generateModernTemplate(d) {
+            return `
+            <div class="flex flex-col min-h-[297mm]">
+                <!-- Modern Top Header Banner -->
+                <div class="bg-slate-900 text-white p-8">
+                    <h1 class="text-3xl font-extrabold tracking-tight">${d.name}</h1>
+                    <p class="text-emerald-400 text-base font-medium mt-1">${d.title}</p>
+                    <div class="flex flex-wrap gap-4 text-xs text-slate-300 mt-4 pt-4 border-t border-slate-800">
+                        ${d.phone ? `<span><i class="fa-solid fa-phone text-emerald-400"></i> ${d.phone}</span>` : ''}
+                        ${d.email ? `<span><i class="fa-solid fa-envelope text-emerald-400"></i> ${d.email}</span>` : ''}
+                        ${d.website ? `<span><i class="fa-solid fa-globe text-emerald-400"></i> ${d.website}</span>` : ''}
+                        ${d.presentAddress ? `<span><i class="fa-solid fa-location-dot text-emerald-400"></i> ${d.presentAddress}</span>` : ''}
+                    </div>
+                </div>
+
+                <div class="p-8 flex-1 text-xs leading-relaxed space-y-6">
+                    ${d.objective ? `
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Profile</h2>
+                        <p class="text-slate-700 leading-relaxed text-justify">${d.objective}</p>
+                    </div>` : ''}
+
+                    ${experiences.length > 0 ? `
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Experience</h2>
+                        <div class="space-y-4">
+                            ${experiences.map(exp => `
+                                <div class="relative pl-4 border-l-2 border-slate-200">
+                                    <div class="flex justify-between items-baseline">
+                                        <h3 class="font-bold text-slate-900 text-sm">${exp.designation}</h3>
+                                        <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">${exp.duration}</span>
+                                    </div>
+                                    <p class="text-slate-600 font-medium text-xs">${exp.company} ${exp.location ? `• ${exp.location}` : ''}</p>
+                                    ${exp.details ? `<p class="text-slate-600 mt-1">${exp.details}</p>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    ${educations.length > 0 ? `
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Education</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            ${educations.map(edu => `
+                                <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                    <h3 class="font-bold text-slate-800">${edu.degree}</h3>
+                                    <p class="text-slate-600">${edu.institution}</p>
+                                    <div class="flex justify-between text-slate-500 mt-2 text-[11px]">
+                                        <span>Year: ${edu.year}</span>
+                                        <span class="font-semibold text-slate-700">${edu.result}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    ${d.skills.length > 0 ? `
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Skills</h2>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${d.skills.map(s => `<span class="bg-slate-900 text-white text-[11px] px-3 py-1 rounded-full">${s}</span>`).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    <!-- 2-PAGE EXTRA CONTENT FOR MODERN -->
+                    ${currentFormat === '2page' ? `
+                    <div class="page-break my-6 border-t-2 border-dashed border-slate-300 pt-6 no-print text-center text-xs text-slate-400">[ Page 2 Starts Below ]</div>
+                    
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Personal Information</h2>
+                        <div class="grid grid-cols-2 gap-x-6 gap-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                            <div><span class="text-slate-500">Father's Name:</span> <span class="font-medium text-slate-800">${d.fatherName}</span></div>
+                            <div><span class="text-slate-500">Mother's Name:</span> <span class="font-medium text-slate-800">${d.motherName}</span></div>
+                            <div><span class="text-slate-500">Date of Birth:</span> <span class="font-medium text-slate-800">${d.dob}</span></div>
+                            <div><span class="text-slate-500">Nationality:</span> <span class="font-medium text-slate-800">${d.nationality}</span></div>
+                            <div><span class="text-slate-500">NID:</span> <span class="font-medium text-slate-800">${d.nid}</span></div>
+                            <div><span class="text-slate-500">Marital Status:</span> <span class="font-medium text-slate-800">${d.maritalStatus}</span></div>
+                            <div><span class="text-slate-500">Religion:</span> <span class="font-medium text-slate-800">${d.religion}</span></div>
+                            <div><span class="text-slate-500">Blood Group:</span> <span class="font-medium text-slate-800">${d.bloodGroup}</span></div>
+                            <div class="col-span-2"><span class="text-slate-500">Permanent Address:</span> <span class="font-medium text-slate-800">${d.permanentAddress}</span></div>
+                        </div>
+                    </div>
+
+                    ${references.length > 0 ? `
+                    <div>
+                        <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">References</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            ${references.map(r => `
+                                <div class="p-3 bg-white border border-slate-200 rounded-lg shadow-sm">
+                                    <h3 class="font-bold text-slate-900">${r.name}</h3>
+                                    <p class="text-slate-600 text-[11px]">${r.designation}, ${r.organization}</p>
+                                    <p class="text-slate-500 text-[11px] mt-1"><i class="fa-solid fa-phone text-slate-400"></i> ${r.phone}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>` : ''}
+                    ` : ''}
+                </div>
+            </div>
+            `;
+        }
+
+        // 3. Corporate Elegant Two-Column Layout Template
+        function generateCorporateTemplate(d) {
+            return `
+            <div class="grid grid-cols-12 min-h-[297mm]">
+                <!-- Sidebar Column (4 Cols) -->
+                <div class="col-span-4 bg-slate-100 p-6 border-r border-slate-200 flex flex-col gap-6 text-xs">
+                    <div>
+                        <h1 class="text-xl font-bold text-bdGreen uppercase leading-tight">${d.name}</h1>
+                        <p class="text-slate-600 font-semibold mt-1">${d.title}</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h2 class="font-bold text-slate-900 uppercase border-b border-slate-300 pb-1 text-[11px]">Contact</h2>
+                        ${d.phone ? `<p class="text-slate-700"><i class="fa-solid fa-phone text-bdGreen w-4"></i> ${d.phone}</p>` : ''}
+                        ${d.email ? `<p class="text-slate-700 break-all"><i class="fa-solid fa-envelope text-bdGreen w-4"></i> ${d.email}</p>` : ''}
+                        ${d.website ? `<p class="text-slate-700 break-all"><i class="fa-solid fa-globe text-bdGreen w-4"></i> ${d.website}</p>` : ''}
+                        ${d.presentAddress ? `<p class="text-slate-700"><i class="fa-solid fa-location-dot text-bdGreen w-4"></i> ${d.presentAddress}</p>` : ''}
+                    </div>
+
+                    ${d.skills.length > 0 ? `
+                    <div>
+                        <h2 class="font-bold text-slate-900 uppercase border-b border-slate-300 pb-1 text-[11px] mb-2">Skills</h2>
+                        <div class="space-y-1">
+                            ${d.skills.map(s => `<div class="bg-white px-2 py-1 rounded text-slate-700 border border-slate-200 font-medium">${s}</div>`).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    ${currentFormat === '2page' ? `
+                    <div>
+                        <h2 class="font-bold text-slate-900 uppercase border-b border-slate-300 pb-1 text-[11px] mb-2">Personal Info</h2>
+                        <div class="space-y-1.5 text-[11px] text-slate-700">
+                            <p><span class="font-semibold block text-slate-500">Father:</span> ${d.fatherName}</p>
+                            <p><span class="font-semibold block text-slate-500">Mother:</span> ${d.motherName}</p>
+                            <p><span class="font-semibold block text-slate-500">DOB:</span> ${d.dob}</p>
+                            <p><span class="font-semibold block text-slate-500">NID:</span> ${d.nid}</p>
+                            <p><span class="font-semibold block text-slate-500">Status:</span> ${d.maritalStatus}</p>
+                        </div>
+                    </div>` : ''}
+                </div>
+
+                <!-- Main Content Column (8 Cols) -->
+                <div class="col-span-8 p-6 text-xs space-y-6">
+                    ${d.objective ? `
+                    <div>
+                        <h2 class="text-sm font-bold text-bdGreen uppercase tracking-wider mb-2 border-b pb-1">Executive Summary</h2>
+                        <p class="text-slate-700 leading-relaxed text-justify">${d.objective}</p>
+                    </div>` : ''}
+
+                    ${experiences.length > 0 ? `
+                    <div>
+                        <h2 class="text-sm font-bold text-bdGreen uppercase tracking-wider mb-3 border-b pb-1">Work History</h2>
+                        <div class="space-y-4">
+                            ${experiences.map(exp => `
+                                <div>
+                                    <div class="flex justify-between items-baseline">
+                                        <h3 class="font-bold text-slate-900">${exp.designation}</h3>
+                                        <span class="text-[11px] font-semibold text-slate-500">${exp.duration}</span>
+                                    </div>
+                                    <p class="text-bdGreen font-medium text-[11px]">${exp.company}</p>
+                                    ${exp.details ? `<p class="text-slate-600 mt-1">${exp.details}</p>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    ${educations.length > 0 ? `
+                    <div>
+                        <h2 class="text-sm font-bold text-bdGreen uppercase tracking-wider mb-3 border-b pb-1">Education</h2>
+                        <div class="space-y-3">
+                            ${educations.map(edu => `
+                                <div>
+                                    <div class="flex justify-between font-bold text-slate-800">
+                                        <span>${edu.degree}</span>
+                                        <span>${edu.year}</span>
+                                    </div>
+                                    <p class="text-slate-600">${edu.institution}</p>
+                                    <p class="text-slate-500 text-[11px]">Result: ${edu.result}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    ${currentFormat === '2page' && references.length > 0 ? `
+                    <div class="page-break my-4 border-t border-slate-200 pt-4">
+                        <h2 class="text-sm font-bold text-bdGreen uppercase tracking-wider mb-3 border-b pb-1">References</h2>
+                        <div class="space-y-3">
+                            ${references.map(r => `
+                                <div class="p-2 border border-slate-200 rounded">
+                                    <p class="font-bold text-slate-800">${r.name}</p>
+                                    <p class="text-slate-600 text-[11px]">${r.designation} - ${r.organization}</p>
+                                    <p class="text-slate-500 text-[11px]">Phone: ${r.phone}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>` : ''}
+                </div>
+            </div>
+            `;
+        }
+    </script>
+</body>
+</html>

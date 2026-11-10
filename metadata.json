@@ -1,0 +1,6 @@
+{
+  "name": "BD Pro CV Maker - Bangladeshi Professional CV Builder",
+  "description": "Professional Bangladeshi CV and Resume maker with official BD corporate and govt formats, bi-lingual support (Bangla & English), 1-page & 2-page layouts, instant PDF export, role presets, and smart career enhancement.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
