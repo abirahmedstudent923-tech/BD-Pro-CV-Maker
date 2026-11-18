@@ -282,6 +282,113 @@ Format Guidelines:
     }
   });
 
+  // 4. AI ATS & Job Circular Review Endpoint
+  app.post('/api/ai/ats-review', async (req: Request, res: Response) => {
+    const { cvData, jobDescription, language } = req.body || {};
+    const isBn = language === 'bn';
+
+    const buildDeterministicReview = () => {
+      const skills: string[] = Array.isArray(cvData?.skills) ? cvData.skills : [];
+      const hasObjective = Boolean(cvData?.objective && cvData.objective.trim().length > 30);
+      const expCount = Array.isArray(cvData?.experiences) ? cvData.experiences.length : 0;
+      const eduCount = Array.isArray(cvData?.educations) ? cvData.educations.length : 0;
+
+      const strengths: string[] = [];
+      const improvements: string[] = [];
+
+      if (hasObjective) {
+        strengths.push(isBn ? 'ক্যারিয়ার অবজেক্টিভ স্পষ্টভাবে লেখা আছে' : 'Clear career objective statement present');
+      } else {
+        improvements.push(isBn ? 'সংক্ষিপ্ত ও লক্ষ্যভিত্তিক ক্যারিয়ার অবজেক্টিভ যুক্ত করুন' : 'Add a concise 2-3 sentence career objective tailored to the target role');
+      }
+      if (expCount > 0) {
+        strengths.push(isBn ? `${expCount}টি কাজের অভিজ্ঞতা অন্তর্ভুক্ত রয়েছে` : `${expCount} work experience entries documented`);
+      } else {
+        improvements.push(isBn ? 'অভিজ্ঞতা বা প্রজেক্টের কাজে সংখ্যাগত ফলাফল (যেমন % বৃদ্ধি) উল্লেখ করুন' : 'Include internships, volunteer roles, or measurable project outcomes');
+      }
+      if (skills.length >= 6) {
+        strengths.push(isBn ? `${skills.length}টি মূল দক্ষতা (Keywords) সুন্দরভাবে তালিকাভুক্ত` : `${skills.length} core skill keywords listed for ATS parsing`);
+      } else {
+        improvements.push(isBn ? 'অন্তত ৬-১০টি চাকরি-সংশ্লিষ্ট টেকনিক্যাল ও সফট স্কিল যুক্ত করুন' : 'Expand Skills list to 6-10 role-specific keywords from the circular');
+      }
+      if (eduCount > 0) {
+        strengths.push(isBn ? 'বাংলাদেশি স্ট্যান্ডার্ড শিক্ষাগত যোগ্যতার বিবরণ সম্পূর্ণ' : 'Structured educational credentials included');
+      }
+      if (!cvData?.personal?.linkedin) {
+        improvements.push(isBn ? 'LinkedIn প্রোফাইল লিংক যুক্ত করলে কর্পোরেট রিক্রুটারদের বিশ্বাসযোগ্যতা বাড়ে' : 'Add your LinkedIn profile URL for recruiter verification');
+      }
+
+      const jdLower = (jobDescription || '').toLowerCase();
+      const suggestedKeywords = ['Communication', 'Teamwork', 'MS Excel', 'Project Management', 'Leadership', 'Problem Solving', 'Analytical Skills']
+        .filter((kw) => (!jdLower || jdLower.includes(kw.toLowerCase())) && !skills.some((s) => s.toLowerCase() === kw.toLowerCase()))
+        .slice(0, 5);
+
+      return {
+        summary: isBn
+          ? 'আপনার সিভির গঠন বাংলাদেশি কর্পোরেট ও ATS স্ক্রিনিংয়ের জন্য উপযোগী। নিচের পরামর্শগুলো প্রয়োগ করলে ইন্টারভিউ কল পাওয়ার সম্ভাবনা আরও বাড়বে।'
+          : 'Your CV structure aligns well with Bangladeshi corporate & ATS standards. Addressing the quick suggestions below will improve your shortlist rate.',
+        strengths,
+        improvements,
+        suggestedKeywords,
+        source: 'analyzer',
+      };
+    };
+
+    try {
+      const ai = getAI();
+      if (!ai) {
+        return res.json(buildDeterministicReview());
+      }
+
+      const prompt = `You are a senior Bangladeshi Corporate HR Manager and ATS (Applicant Tracking System) auditor.
+Analyze the candidate CV against the target Job Circular below and respond in ${isBn ? 'Bengali (বাংলা)' : 'English'}.
+
+Candidate Role: ${cvData?.personal?.jobTitle || 'Not specified'}
+Objective: ${cvData?.objective || 'None'}
+Skills: ${(cvData?.skills || []).join(', ')}
+Experience Count: ${(cvData?.experiences || []).length}
+Education Count: ${(cvData?.educations || []).length}
+
+Target Job Circular / Description:
+"${(jobDescription || 'General Corporate / Tech Role in Bangladesh').slice(0, 1800)}"
+
+Return ONLY valid JSON with exact keys:
+{
+  "summary": "2 concise sentences evaluating overall readiness",
+  "strengths": ["2-3 specific strengths"],
+  "improvements": ["2-4 actionable fixes"],
+  "suggestedKeywords": ["3-5 missing relevant skill keywords in English"]
+}`;
+
+      const responsePromise = ai.models.generateContent({
+        model: 'gemini-3.8-flash',
+        contents: prompt,
+      });
+
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('AI request timeout')), 6000)
+      );
+
+      const response = await Promise.race([responsePromise, timeoutPromise]) as any;
+      let text = response.text?.trim() || '';
+      if (text.startsWith('```json')) text = text.slice(7);
+      if (text.startsWith('```')) text = text.slice(3);
+      if (text.endsWith('```')) text = text.slice(0, -3);
+      text = text.trim();
+
+      const parsed = JSON.parse(text);
+      return res.json({
+        summary: parsed.summary || buildDeterministicReview().summary,
+        strengths: Array.isArray(parsed.strengths) ? parsed.strengths : [],
+        improvements: Array.isArray(parsed.improvements) ? parsed.improvements : [],
+        suggestedKeywords: Array.isArray(parsed.suggestedKeywords) ? parsed.suggestedKeywords : [],
+        source: 'ai',
+      });
+    } catch {
+      return res.json(buildDeterministicReview());
+    }
+  });
+
   // Serve static assets or mount Vite middleware
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, 'dist')));
@@ -294,9 +401,36 @@ Format Guidelines:
       server: {
         middlewareMode: true,
         hmr: isHmrDisabled ? false : { server: httpServer },
+        ws: isHmrDisabled ? false : undefined,
       },
       appType: 'spa',
     });
+
+    if (isHmrDisabled) {
+      app.get('/@vite/client', async (_req, res, next) => {
+        try {
+          const result = await vite.transformRequest('/@vite/client');
+          if (!result) return next();
+          const safeCode = result.code
+            .replace(
+              'transport.connect(createHMRHandler(handleMessage));',
+              '/* WebSocket HMR connection skipped when DISABLE_HMR=true */'
+            )
+            .replace(
+              'else throw new SendBeforeConnectError("send was called before connect");',
+              'else return;'
+            )
+            .replace(
+              'else throw new SendBeforeConnectError("invoke was called before connect");',
+              'else return;'
+            );
+          res.status(200).type('application/javascript').send(safeCode);
+        } catch (err) {
+          next(err);
+        }
+      });
+    }
+
     app.use(vite.middlewares);
   }
 
